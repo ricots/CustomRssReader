@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Bill Updates RSS</string>
+    <string name="webview_activity">Bill</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+</resources>
