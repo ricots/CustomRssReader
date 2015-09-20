@@ -3,16 +3,14 @@ package com.example.josh.techcrunchrss;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
@@ -34,13 +32,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 
-public class MainActivity extends ActionBarActivity implements ResultsCallback {
+public class MainActivity extends ActionBarActivity implements ResultsCallback, AdapterView.OnItemClickListener {
 
     PlaceholderFragment taskFragment;
     ListView articlesListView;
-
-
-    static final String KEY_LINK = "link";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,40 +43,42 @@ public class MainActivity extends ActionBarActivity implements ResultsCallback {
         setContentView(R.layout.activity_main);
 
 
-        final SwipeRefreshLayout swipeView = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
+        //final SwipeRefreshLayout swipeView = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
 
-        swipeView.setColorScheme(android.R.color.holo_blue_bright, android.R.color.holo_green_light,
-                android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        //swipeView.setColorScheme(android.R.color.holo_blue_bright, android.R.color.holo_green_light,
+                //android.R.color.holo_orange_light, android.R.color.holo_red_light);
 
 
         articlesListView = (ListView) findViewById(R.id.articlesListView);
-        ArrayAdapter<String> adp = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+        final ArrayAdapter<String> adp = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         articlesListView.setAdapter(adp);
+        articlesListView.setOnItemClickListener(this);
 
-        swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        //swipeView.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
-            @Override
-            public void onRefresh() {
+            //@Override
+            //public void onRefresh() {
 
                 //new TechCrunchTask().execute(feedUrl);
 
-                swipeView.setRefreshing(true);
-                ( new Handler()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeView.setRefreshing(false);
+                //swipeView.setRefreshing(true);
+                //( new Handler()).postDelayed(new Runnable() {
+                    //@Override
+                    //public void run() {
+                        //swipeView.setRefreshing(false);
 
-                    }
-                }, 4000);
-            }
-        });
-
+                //    }
+                //}, 4000);
+            //}
+        //});
+/*
         articlesListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {
 
             }
-
+            */
+/*
             @Override
             public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (firstVisibleItem == 0)
@@ -90,8 +87,7 @@ public class MainActivity extends ActionBarActivity implements ResultsCallback {
                     swipeView.setEnabled(false);
             }
         });
-
-
+*/
 
         if (savedInstanceState == null) {
             taskFragment = new PlaceholderFragment();
@@ -104,21 +100,7 @@ public class MainActivity extends ActionBarActivity implements ResultsCallback {
 
         articlesListView = (ListView) findViewById(R.id.articlesListView);
 
-
-
-
-        //Trying to work with onItemClickListener
-        //articlesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            //@Override
-            //public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //articlesListView.getItemAtPosition(position);
-                //Toast.makeText(getApplicationContext(), "You clicked item at position " + position, Toast.LENGTH_SHORT).show();
-            //}
-        //});
-
-
         }
-
 
     @Override
     public void onPreExecute() {
@@ -129,19 +111,17 @@ public class MainActivity extends ActionBarActivity implements ResultsCallback {
     public void onPostExecute(final ArrayList<HashMap<String, String>> results) {
 
         articlesListView.setAdapter(new MyAdapter(this, results));
-//****ATTEMPTING ONITEMCLICKLISTENER HERE*******************//
-        articlesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), MyCreatedClass.class);
-                new Bundle();
-                intent.putExtra("b", results.get(position).get(KEY_LINK));
-                startActivity(intent);
-            }
-        });
+
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        MyAdapter adapter = (MyAdapter)articlesListView.getAdapter();
+        Uri uri = Uri.parse(adapter.dataSource.get(position).get("link"));
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
 
+    }
 
     public static class PlaceholderFragment extends Fragment{
 
@@ -185,11 +165,8 @@ public class MainActivity extends ActionBarActivity implements ResultsCallback {
             {
                 downloadTask.onDetach();
             }
-
         }
     }
-
-// feeds.feedburner.com/techcrunch/android?format=xml
 
     public static class TechCrunchTask extends AsyncTask<Void, Void, ArrayList<HashMap<String, String>>>{
 
@@ -197,17 +174,14 @@ public class MainActivity extends ActionBarActivity implements ResultsCallback {
 
         public TechCrunchTask(ResultsCallback callback){
             this.callback = callback;
-
         }
 
         public void onAttach(ResultsCallback callback) {
             this.callback = callback;
-
         }
 
         public  void onDetach() {
             callback = null;
-
         }
 
         @Override
@@ -216,7 +190,6 @@ public class MainActivity extends ActionBarActivity implements ResultsCallback {
             {
                 callback.onPreExecute();
             }
-
 
         }
 
@@ -240,6 +213,8 @@ public class MainActivity extends ActionBarActivity implements ResultsCallback {
 
         @Override
         protected void onPostExecute(ArrayList<HashMap<String, String>> result) {
+
+
             if (callback!=null)
             {
                 callback.onPostExecute(result);
@@ -259,7 +234,6 @@ public class MainActivity extends ActionBarActivity implements ResultsCallback {
             int count = 0;
             ArrayList<HashMap<String, String>> results = new ArrayList<>();
             HashMap<String, String> currentMap = null;
-
 
 
             for (int i = 0; i<itemsList.getLength(); i++){
@@ -283,10 +257,9 @@ public class MainActivity extends ActionBarActivity implements ResultsCallback {
                         // L.m(currentChild.getTextContent());
                         currentMap.put("description", currentChild.getTextContent());
                     }
-                    if (currentChild.getNodeName().equalsIgnoreCase(KEY_LINK)){
-                        currentMap.put(KEY_LINK, currentChild.getTextContent());
+                    if (currentChild.getNodeName().equalsIgnoreCase("link")){
+                        currentMap.put("link", currentChild.getTextContent());
                     }
-
                     /*
                         if (currentChild.getNodeName().equalsIgnoreCase("media:thumbnail")){
                         count++;
@@ -294,11 +267,8 @@ public class MainActivity extends ActionBarActivity implements ResultsCallback {
                             currentMap.put("imageURL", currentChild.getAttributes().item(0).getTextContent());
                             // L.m(currentChild.getAttributes().item(0).getTextContent());
                         }
-
                     }
                      */
-
-
 
                 }
                 if (currentMap !=null && !currentMap.isEmpty()){
@@ -308,13 +278,8 @@ public class MainActivity extends ActionBarActivity implements ResultsCallback {
             }
             return results;
 
-
-
-
         }
     }
-
-
 }
 
 interface ResultsCallback {
@@ -330,10 +295,12 @@ class MyAdapter extends BaseAdapter {
     Context context;
     LayoutInflater layoutInflater;
 
+
     public MyAdapter(Context context, ArrayList<HashMap<String, String>> dataSource){
         this.dataSource = dataSource;
         this.context = context;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
     }
 
     @Override
@@ -363,7 +330,6 @@ class MyAdapter extends BaseAdapter {
         } else {
             holder = (MyHolder) row.getTag();
 
-
         }
 
         HashMap<String, String> currentItem = dataSource.get(position);
@@ -371,7 +337,7 @@ class MyAdapter extends BaseAdapter {
         holder.articlePublishedDateText.setText(currentItem.get("pubDate"));
         //holder.articleImage.setImageURI(Uri.parse(currentItem.get("imageURL")));
         holder.articleDescriptionText.setText(currentItem.get("description"));
-        holder.articleLink.setText(currentItem.get("link"));
+        //holder.articleLink.setText(currentItem.get("link"));
 
         return row;
     }
@@ -383,7 +349,7 @@ class MyHolder {
     TextView articlePublishedDateText;
     //ImageView articleImage;
     TextView articleDescriptionText;
-    TextView articleLink;
+    //TextView articleLink;
 
     public MyHolder(View view) {
 
@@ -391,11 +357,9 @@ class MyHolder {
         articlePublishedDateText = (TextView) view.findViewById(R.id.articlePublishedDate);
         //articleImage = (ImageView) view.findViewById(R.id.articleImage);
         articleDescriptionText = (TextView) view.findViewById(R.id.articleDescriptionText);
-        articleLink = (TextView)view.findViewById(R.id.articleLink);
-
+        //articleLink = (TextView)view.findViewById(R.id.articleLink);
 
     }
-
 
 }
 

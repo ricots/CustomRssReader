@@ -1,9 +1,12 @@
 package com.example.josh.techcrunchrss;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
@@ -12,7 +15,7 @@ import android.widget.ProgressBar;
  */
 public class MyCreatedClass extends Activity {
 
-    private WebView mWebView;
+     WebView mWebView;
     ProgressBar progressBar;
 
 
@@ -21,20 +24,37 @@ public class MyCreatedClass extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_webview);
 
-        Bundle b = getIntent().getExtras();
-        String KEY_LINK = b.getString("KEY_LINK");
+        Intent launchingIntent = getIntent();
+        String content = launchingIntent.getData().toString();
+        mWebView.loadUrl(content);
+
+
+
+        //Bundle b = getIntent().getExtras();
+        //String KEY_LINK = b.getString("KEY_LINK");
+
+        mWebView = (WebView)findViewById(R.id.tutView);
+        //mWebView.loadUrl(KEY_LINK);
 
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
         progressBar.getIndeterminateDrawable().setColorFilter(Color.BLUE, PorterDuff.Mode.SRC_ATOP);
 
-        mWebView = (WebView)findViewById(R.id.tutView);
 
+        mWebView.setWebChromeClient(new WebChromeClient(){
+            public void onProgressChanged(WebView view, int progress)
+            {
+                progressBar.setProgress(progress);
+                if (progress == 100) {
+                    progressBar.setVisibility(View.GONE);
+                }
+            }
+        });
         //mWebView.setWebViewClient(new MyWebViewClient());
 
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setBuiltInZoomControls(true);
 
-        mWebView.loadUrl(KEY_LINK);
+
 
     }
 /*

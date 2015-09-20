@@ -1,29 +1,29 @@
 <RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="8dp"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_height="wrap_content"
+    android:background="#f5f5f5">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/activity_main_swipe_refresh_layout"
+
+    <ListView
+        android:id="@+id/articlesListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-        <ListView
-            android:id="@+id/articlesListView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-
-            />
-
-
-
-    </android.support.v4.widget.SwipeRefreshLayout>
-
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:dividerHeight="3dp"/>
 
 </RelativeLayout>
+
+    <!--
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/activity_main_swipe_refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            </android.support.v4.widget.SwipeRefreshLayout>
+            -->
